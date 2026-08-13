@@ -1,32 +1,50 @@
 #!/data/data/com.termux/files/usr/bin/bash
 
+# Warna
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 CYAN='\033[0;36m'
+BLUE='\033[0;34m'
+PURPLE='\033[0;35m'
 WHITE='\033[1;37m'
 NC='\033[0m'
 
 clear
 
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}  ⚡ CHA TOOLS v1.0 ⚡${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${WHITE}  Author  : nzm${NC}"
-echo -e "${WHITE}  Version : 1.0${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+# Banner besar
+echo -e "${RED}╔═══════════════════════════════════════════════════════════════════╗${NC}"
+echo -e "${RED}║${NC}                                                                   ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN}██████╗██╗  ██╗ █████╗     ████████╗ ██████╗ ██╗     ███████╗${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN}██╔════╝██║  ██║██╔══██╗    ╚══██╔══╝██╔═══██╗██║     ██╔════╝${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN}██║     ███████║███████║       ██║   ██║   ██║██║     ███████╗${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN}██║     ██╔══██║██╔══██║       ██║   ██║   ██║██║     ╚════██║${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN}╚██████╗██║  ██║██║  ██║       ██║   ╚██████╔╝███████╗███████║${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${CYAN} ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝       ╚═╝    ╚═════╝ ╚══════╝╚══════╝${NC}  ${RED}║${NC}"
+echo -e "${RED}║${NC}                                                                   ${RED}║${NC}"
+echo -e "${RED}╠═══════════════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${RED}║${NC}  ${YELLOW}⚡ CHAA-TOOLS v2.0 ⚡${NC}                                        ${RED}║${NC}"
+echo -e "${RED}╠═══════════════════════════════════════════════════════════════════════╣${NC}"
+echo -e "${RED}║${NC}  ${WHITE}Author   : nzm${NC}                                          ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${WHITE}Version  : 2.0${NC}                                          ${RED}║${NC}"
+echo -e "${RED}║${NC}  ${WHITE}Status   : ${GREEN}DEVELOPER${NC}                                   ${RED}║${NC}"
+echo -e "${RED}╚═══════════════════════════════════════════════════════════════════════╝${NC}"
 echo ""
-echo -e "${GREEN}[01]${NC} CAMERA PHISH (WEBCAM + GPS)"
-echo -e "${GREEN}[02]${NC} CEK HASIL (FOTO + IP + GPS)"
-echo -e "${GREEN}[03]${NC} BUKA FOTO (TERMUX-VIEWER)"
-echo -e "${GREEN}[04]${NC} COPY FOTO KE GALERI"
-echo -e "${GREEN}[05]${NC} CEK IP TARGET"
-echo -e "${GREEN}[06]${NC} HAPUS SEMUA HASIL"
-echo -e "${GREEN}[00]${NC} KELUAR"
+echo -e "${YELLOW}┌───────────────────────────────────────────────────────────────────────┐${NC}"
+echo -e "${YELLOW}│${NC}  ${PURPLE}[ MAIN MENU ]${NC}                                                    ${YELLOW}│${NC}"
+echo -e "${YELLOW}└───────────────────────────────────────────────────────────────────────┘${NC}"
 echo ""
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-echo -e "${YELLOW}📌 by nzm${NC}"
-echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+echo -e "${GREEN}  [01]${NC}  CAMERA PHISH (WEBCAM + GPS)"
+echo -e "${GREEN}  [02]${NC}  CEK HASIL (FOTO + IP + GPS)"
+echo -e "${GREEN}  [03]${NC}  BUKA FOTO (TERMUX-VIEWER)"
+echo -e "${GREEN}  [04]${NC}  COPY FOTO KE GALERI"
+echo -e "${GREEN}  [05]${NC}  CEK IP TARGET"
+echo -e "${GREEN}  [06]${NC}  HAPUS SEMUA HASIL"
+echo -e "${RED}  [00]${NC}  KELUAR"
+echo ""
+echo -e "${CYAN}┌───────────────────────────────────────────────────────────────────────┐${NC}"
+echo -e "${CYAN}│${NC}  ${YELLOW}📌 CHAA TOLS${NC}                                                  ${CYAN}│${NC}"
+echo -e "${CYAN}└───────────────────────────────────────────────────────────────────────┘${NC}"
 echo ""
 read -p "➤ Pilih menu : " menu
 
@@ -47,14 +65,14 @@ case $menu in
     2)
         echo -e "${GREEN}▶ CEK HASIL${NC}"
         cd ~/cha-phish/"ai mamb"/captured
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${YELLOW}📊 DATA LOGIN + GPS${NC}"
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         cat data.txt 2>/dev/null || echo "Belum ada data"
         echo ""
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${YELLOW}📸 DAFTAR FOTO${NC}"
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         ls images/ 2>/dev/null || echo "Belum ada foto"
         echo ""
         read -p "Tekan Enter untuk kembali..."
@@ -63,6 +81,9 @@ case $menu in
     3)
         echo -e "${GREEN}▶ BUKA FOTO${NC}"
         cd ~/cha-phish/"ai mamb"/captured/images
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${YELLOW}📸 DAFTAR FOTO${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         ls 2>/dev/null || echo "Belum ada foto"
         echo ""
         read -p "Masukkan nama file foto: " foto
@@ -80,9 +101,9 @@ case $menu in
     5)
         echo -e "${GREEN}▶ CEK IP TARGET${NC}"
         cd ~/cha-phish/"ai mamb"/captured
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         echo -e "${YELLOW}🌐 IP TARGET TERAKHIR${NC}"
-        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
+        echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
         grep -oE 'IP     : [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' data.txt 2>/dev/null | tail -1 || echo "Belum ada data"
         echo ""
         read -p "Tekan Enter untuk kembali..."
